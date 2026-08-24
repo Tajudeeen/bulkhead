@@ -18,7 +18,7 @@ export async function buildProof(config: ProofSubmitterConfig, sourceTxHash: str
   if (!tx) throw new Error(`source transaction not found: ${sourceTxHash}`);
   if (tx.blockNumber === null) throw new Error(`source transaction is not mined: ${sourceTxHash}`);
 
-  const info = new chainInfo.PrecompileChainInfoProvider(creditcoinRpc);
+  const info = new chainInfo.PrecompileChainInfoProvider(creditcoinRpc as any);
   await info.getLatestAttestedHeightAndHash(config.sourceChainKey);
   const builder = new proofProvider.service.ProofBuilder(config.sourceChainKey, config.proofBuilderUrl);
   await builder.waitUntilHeightAttested(config.sourceChainKey, tx.blockNumber, 15_000, 1_200_000);
