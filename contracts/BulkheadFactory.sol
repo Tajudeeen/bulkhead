@@ -18,7 +18,6 @@ contract BulkheadFactory {
     }
 
     function createBulkhead(uint256 clusterId) external returns (address instance) {
-        require(msg.sender == overseer, "only overseer");
         require(_clusters[clusterId].length < DEFAULT_CLUSTER_SIZE, "cluster full");
         instance = address(new Bulkhead(clusterId, overseer));
         _clusters[clusterId].push(instance);
@@ -27,7 +26,6 @@ contract BulkheadFactory {
     }
 
     function createCluster(uint256 clusterId, uint256 count) external returns (address[] memory instances) {
-        require(msg.sender == overseer, "only overseer");
         require(count > 0 && count <= DEFAULT_CLUSTER_SIZE, "invalid count");
         require(_clusters[clusterId].length == 0, "cluster exists");
         instances = new address[](count);
