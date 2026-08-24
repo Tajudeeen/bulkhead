@@ -3,6 +3,8 @@
 /* eslint-disable */
 import type * as attestationGatewaySol from './AttestationGateway.sol/index.js';
 export type { attestationGatewaySol };
+import type * as overseerSol from './Overseer.sol/index.js';
+export type { overseerSol };
 import type * as mocks from './mocks/index.js';
 export type { mocks };
 export type { Bulkhead } from './Bulkhead.js';
@@ -14,6 +16,12 @@ export type { INativeQueryVerifier } from './AttestationGateway.sol/INativeQuery
 export { INativeQueryVerifier__factory } from './factories/AttestationGateway.sol/INativeQueryVerifier__factory.js';
 export { Bulkhead__factory } from './factories/Bulkhead__factory.js';
 export { BulkheadFactory__factory } from './factories/BulkheadFactory__factory.js';
+export type { IAttestationGateway } from './Overseer.sol/IAttestationGateway.js';
+export { IAttestationGateway__factory } from './factories/Overseer.sol/IAttestationGateway__factory.js';
+export type { Overseer } from './Overseer.sol/Overseer.js';
+export { Overseer__factory } from './factories/Overseer.sol/Overseer__factory.js';
+export type { MockDistressSignal } from './mocks/MockDistressSignal.js';
+export { MockDistressSignal__factory } from './factories/mocks/MockDistressSignal__factory.js';
 export type { MockPrecompile } from './mocks/MockPrecompile.js';
 export { MockPrecompile__factory } from './factories/mocks/MockPrecompile__factory.js';
 export type { MockReceiptEncoder } from './mocks/MockReceiptEncoder.js';

@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as attestationGatewaySol from './AttestationGateway.sol/index.js';
+export * as overseerSol from './Overseer.sol/index.js';
 export * as mocks from './mocks/index.js';
 export { Bulkhead__factory } from './Bulkhead__factory.js';
 export { BulkheadFactory__factory } from './BulkheadFactory__factory.js';

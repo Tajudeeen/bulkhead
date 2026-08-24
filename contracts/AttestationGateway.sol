@@ -23,6 +23,7 @@ contract AttestationGateway {
     error BatchTooLarge();
 
     address public constant PRECOMPILE_ADDRESS = 0x0000000000000000000000000000000000000FD2;
+    address public immutable overseer;
 
     struct Query {
         uint64 chainKey;
@@ -39,6 +40,10 @@ contract AttestationGateway {
         bytes encodedTransaction
     );
 
+    constructor(address overseer_) {
+        overseer = overseer_;
+    }
+
     // USC caps one continuity proof batch at 10 queries; seven points exactly
     // covers a full Bulkhead cluster while leaving protocol headroom.
     function verify(Query calldata query) external returns (bytes32 queryId) {
@@ -53,6 +58,20 @@ contract AttestationGateway {
         for (uint256 i; i < length; ++i) {
             queryIds[i] = _verify(queries[i]);
         }
+    }
+
+    function verifyAndProcess(Query calldata query, uint256 clusterId, uint256 distressBps) external returns (bytes32 queryId) {
+        queryId = _verify(query);
+        if (overseer != address(0)) {
+            (bool ok,) = overseer.call(abi.encodeWithSignature("processVerifiedData(bytes32,uint256,uint256)", queryId, clusterId, distressBps));
+            require(ok, "overseer callback failed");
+        }
+    }
+
+    function registerCluster(address overseerTarget, uint256 clusterId, address[] calldata bulkheads) external {
+        require(msg.sender == overseer, "only overseer");
+        (bool ok,) = overseerTarget.call(abi.encodeWithSignature("registerCluster(uint256,address[])", clusterId, bulkheads));
+        require(ok, "cluster registration failed");
     }
 
     function _verify(Query calldata query) internal returns (bytes32 queryId) {
