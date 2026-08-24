@@ -4,6 +4,8 @@ pragma solidity ^0.8.24;
 import {Bulkhead} from "./Bulkhead.sol";
 
 contract BulkheadFactory {
+    // Factory deployment is permissionless; each instance keeps its own state,
+    // and only its constructor-configured Overseer can halt it.
     uint256 public constant DEFAULT_CLUSTER_SIZE = 7;
     address public immutable overseer;
     uint256 public nextClusterId;

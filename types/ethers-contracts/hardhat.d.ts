@@ -10,21 +10,33 @@ import * as Contracts from "./index.js";
 
 declare module "@nomicfoundation/hardhat-ethers/types" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
-  getContractFactory(name: 'BulkheadFactory', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.BulkheadFactory__factory>
+  getContractFactory(name: 'AttestationGateway', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.AttestationGateway__factory>
+getContractFactory(name: 'INativeQueryVerifier', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.INativeQueryVerifier__factory>
 getContractFactory(name: 'Bulkhead', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.Bulkhead__factory>
+getContractFactory(name: 'BulkheadFactory', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.BulkheadFactory__factory>
 getContractFactory(name: 'MockPrecompile', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.MockPrecompile__factory>
+getContractFactory(name: 'MockReceiptEncoder', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.MockReceiptEncoder__factory>
 
-  getContractAt(name: 'BulkheadFactory', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.BulkheadFactory>
+  getContractAt(name: 'AttestationGateway', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.AttestationGateway>
+getContractAt(name: 'INativeQueryVerifier', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.INativeQueryVerifier>
 getContractAt(name: 'Bulkhead', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.Bulkhead>
+getContractAt(name: 'BulkheadFactory', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.BulkheadFactory>
 getContractAt(name: 'MockPrecompile', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.MockPrecompile>
+getContractAt(name: 'MockReceiptEncoder', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.MockReceiptEncoder>
 
-  deployContract(name: 'BulkheadFactory', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.BulkheadFactory>
+  deployContract(name: 'AttestationGateway', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.AttestationGateway>
+deployContract(name: 'INativeQueryVerifier', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.INativeQueryVerifier>
 deployContract(name: 'Bulkhead', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Bulkhead>
+deployContract(name: 'BulkheadFactory', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.BulkheadFactory>
 deployContract(name: 'MockPrecompile', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockPrecompile>
+deployContract(name: 'MockReceiptEncoder', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockReceiptEncoder>
 
-  deployContract(name: 'BulkheadFactory', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.BulkheadFactory>
+  deployContract(name: 'AttestationGateway', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.AttestationGateway>
+deployContract(name: 'INativeQueryVerifier', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.INativeQueryVerifier>
 deployContract(name: 'Bulkhead', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Bulkhead>
+deployContract(name: 'BulkheadFactory', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.BulkheadFactory>
 deployContract(name: 'MockPrecompile', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockPrecompile>
+deployContract(name: 'MockReceiptEncoder', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockReceiptEncoder>
 
     // default types
     getContractFactory(

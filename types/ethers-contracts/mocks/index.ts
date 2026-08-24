@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { MockPrecompile } from './MockPrecompile.js';
+export type { MockReceiptEncoder } from './MockReceiptEncoder.js';

@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { MockPrecompile__factory } from './MockPrecompile__factory.js';
+export { MockReceiptEncoder__factory } from './MockReceiptEncoder__factory.js';
