@@ -6,7 +6,7 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
   
 
   export interface OverseerInterface extends Interface {
-    getFunction(nameOrSignature: "DISTRESS_THRESHOLD_BPS" | "clusterBulkheads" | "gateway" | "processVerifiedData" | "processedQuery" | "registerCluster"): FunctionFragment;
+    getFunction(nameOrSignature: "DISTRESS_THRESHOLD_BPS" | "clusterBulkheads" | "gateway" | "processVerifiedData" | "processedQuery" | "registerCluster" | "registryAdmin"): FunctionFragment;
 
     getEvent(nameOrSignatureOrTopic: "BulkheadHalted" | "ClusterRegistered"): EventFragment;
 
@@ -16,6 +16,7 @@ encodeFunctionData(functionFragment: 'gateway', values?: undefined): string;
 encodeFunctionData(functionFragment: 'processVerifiedData', values: [BytesLike, BigNumberish, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'processedQuery', values: [BytesLike]): string;
 encodeFunctionData(functionFragment: 'registerCluster', values: [BigNumberish, AddressLike[]]): string;
+encodeFunctionData(functionFragment: 'registryAdmin', values?: undefined): string;
 
     decodeFunctionResult(functionFragment: 'DISTRESS_THRESHOLD_BPS', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'clusterBulkheads', data: BytesLike): Result;
@@ -23,6 +24,7 @@ decodeFunctionResult(functionFragment: 'gateway', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'processVerifiedData', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'processedQuery', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'registerCluster', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'registryAdmin', data: BytesLike): Result;
   }
 
   
@@ -131,6 +133,14 @@ decodeFunctionResult(functionFragment: 'registerCluster', data: BytesLike): Resu
     >
     
 
+    
+    registryAdmin: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
 
     getFunction<T extends ContractMethod = ContractMethod>(key: string | FunctionFragment): T;
 
@@ -163,6 +173,11 @@ getFunction(nameOrSignature: 'registerCluster'): TypedContractMethod<
       [clusterId: BigNumberish, bulkheads: AddressLike[], ],
       [void],
       'nonpayable'
+    >;
+getFunction(nameOrSignature: 'registryAdmin'): TypedContractMethod<
+      [],
+      [string],
+      'view'
     >;
 
     getEvent(key: 'BulkheadHalted'): TypedContractEvent<BulkheadHaltedEvent.InputTuple, BulkheadHaltedEvent.OutputTuple, BulkheadHaltedEvent.OutputObject>;

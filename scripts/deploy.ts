@@ -1,6 +1,6 @@
 import { network } from "hardhat";
 
-const { ethers } = await network.create();
+const { ethers } = (await network.create()) as any;
 const [deployer] = await ethers.getSigners();
 const gateway = await ethers.deployContract("AttestationGateway", [deployer.address]);
 const overseer = await ethers.deployContract("Overseer", [await gateway.getAddress()]);
