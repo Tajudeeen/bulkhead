@@ -10,6 +10,7 @@ interface IAttestationGateway {
 contract Overseer {
     uint256 public constant DISTRESS_THRESHOLD_BPS = 2_000;
     address public immutable gateway;
+    address public immutable registryAdmin;
     mapping(uint256 => address[]) public clusterBulkheads;
     mapping(bytes32 => bool) public processedQuery;
 
@@ -27,10 +28,11 @@ contract Overseer {
     constructor(address gateway_) {
         require(gateway_ != address(0), "gateway zero");
         gateway = gateway_;
+        registryAdmin = msg.sender;
     }
 
     function registerCluster(uint256 clusterId, address[] calldata bulkheads) external {
-        require(msg.sender == gateway, "only gateway");
+        require(msg.sender == registryAdmin, "only registry admin");
         require(clusterBulkheads[clusterId].length == 0, "cluster exists");
         require(bulkheads.length > 0 && bulkheads.length <= 7, "invalid cluster");
         clusterBulkheads[clusterId] = bulkheads;
