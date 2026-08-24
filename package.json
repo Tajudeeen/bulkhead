@@ -1,0 +1,29 @@
+{
+  "name": "bulkhead",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@gluwa/usc-contracts": "^0.1.2",
+    "@gluwa/usc-sdk": "^0.18.0",
+    "@openzeppelin/contracts": "^5.4.0",
+    "dotenv": "^17.4.2",
+    "ethers": "^6.17.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox-mocha-ethers": "^3.0.7",
+    "chai": "^6.2.2",
+    "hardhat": "^3.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^7.0.2"
+  }
+}
