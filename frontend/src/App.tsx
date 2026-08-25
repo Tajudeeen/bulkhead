@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { MultiverseField } from "./components/MultiverseField";
 
 type Unit = {
   id: string;
@@ -35,7 +36,7 @@ export default function App() {
   const [clusters, setClusters] = useState(initialClusters);
   const [selectedId, setSelectedId] = useState(1);
   const [clock, setClock] = useState(now);
-  const [lastHalt, setLastHalt] = useState<{ clusterId: number; at: number } | null>(null);
+  const [lastHalt, setLastHalt] = useState<{ clusterId: number; at: number; unitId: string } | null>(null);
 
   useEffect(() => {
     const timer = window.setInterval(() => setClock(Math.floor(Date.now() / 1000)), 1000);
@@ -50,10 +51,12 @@ export default function App() {
   const selectedProjected = selected.units.reduce((sum, unit) => sum + projectedValue(unit, clock), 0);
 
   const triggerDistress = () => {
+    const targetIndex = selected.units.findIndex((unit) => !unit.halted);
+    if (targetIndex < 0) return;
     setClusters((current) => current.map((cluster) => cluster.id === selectedId
-      ? { ...cluster, units: cluster.units.map((unit) => ({ ...unit, halted: true })) }
+      ? { ...cluster, units: cluster.units.map((unit, index) => index === targetIndex ? { ...unit, halted: true } : unit) }
       : cluster));
-    setLastHalt({ clusterId: selectedId, at: Math.floor(Date.now() / 1000) });
+    setLastHalt({ clusterId: selectedId, at: Math.floor(Date.now() / 1000), unitId: selected.units[targetIndex].id });
   };
 
   const resetDemo = () => {
@@ -65,21 +68,22 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <MultiverseField />
       <header className="topbar">
         <div className="brand-lockup"><div className="brand-mark">B</div><div><p className="eyebrow">ATTESTCOIN / CREDITCOIN</p><h1>Bulkhead control room</h1></div></div>
-        <div className="network-state"><span className="pulse-dot" /> <span>Testnet connected</span><span className="network-divider" /> <span className="mono">CC3</span></div>
+        <div className="network-state"><span className="pulse-dot" /> <span>Preview mode</span><span className="network-divider" /> <span className="mono">LOCAL</span></div>
       </header>
 
       <main className="content">
         <section className="intro-row"><div><p className="eyebrow">AUTONOMOUS RISK CONTAINMENT</p><h2>Watch the silos. See the halt.</h2><p className="intro-copy">Projected accrual is anchored to each unit's last attested checkpoint. The counter stops only when the Overseer's on-chain halt event arrives.</p></div><div className="intro-actions"><button className="secondary-button" onClick={resetDemo}>Reset demo</button><button className="primary-button" onClick={triggerDistress}>Simulate attested distress</button></div></section>
 
-        <section className="metric-grid"><Metric label="Total principal" value={money.format(totalPrincipal)} detail="30 active vaults" /><Metric label="Active bulkheads" value={String(activeUnits).padStart(2, "0")} detail="Across 3 clusters" /><Metric label="Halted units" value={String(haltedUnits).padStart(2, "0")} detail={haltedUnits ? "Containment engaged" : "No halt events"} tone={haltedUnits ? "danger" : "normal"} /><Metric label="Published threshold" value="20.00%" detail="2,000 bps distress" tone="amber" /></section>
+        <section className="metric-grid"><Metric label="Total principal" value={money.format(totalPrincipal)} detail={`${activeUnits} active vaults`} /><Metric label="Active bulkheads" value={String(activeUnits).padStart(2, "0")} detail="Across 3 demo clusters" /><Metric label="Halted units" value={String(haltedUnits).padStart(2, "0")} detail={haltedUnits ? "Containment engaged" : "No halt events"} tone={haltedUnits ? "danger" : "normal"} /><Metric label="Published threshold" value="20.00%" detail="2,000 bps distress" tone="amber" /></section>
 
         <section className="workspace-grid"><aside className="cluster-rail"><div className="section-heading"><div><p className="eyebrow">FLEET VIEW</p><h3>Clusters</h3></div><span className="count-badge">3</span></div>{clusters.map((cluster) => { const halted = cluster.units.every((unit) => unit.halted); return <button key={cluster.id} className={`cluster-tab ${selectedId === cluster.id ? "selected" : ""}`} onClick={() => setSelectedId(cluster.id)}><span className={`cluster-icon ${halted ? "halted" : ""}`}>{String(cluster.id).padStart(2, "0")}</span><span className="cluster-meta"><strong>Cluster {cluster.id}</strong><small>{cluster.source}</small></span><span className={`status-dot ${halted ? "red" : "green"}`} /></button>; })}<div className="rail-note"><span className="lock-icon">◎</span><p><strong>Overseer is isolated</strong><br />Bulkheads never query siblings.</p></div></aside>
 
           <div className="detail-pane"><div className="detail-header"><div><div className="title-line"><h3>Cluster {selected.id}</h3><span className={`status-chip ${selected.units.every((unit) => unit.halted) ? "halted" : "active"}`}>{statusLabel}</span></div><p>{selected.source} <span className="dot-separator">·</span> 7 compartments <span className="dot-separator">·</span> last checkpoint {Math.max(1, Math.floor((clock - Math.min(...selected.units.map((unit) => unit.checkpoint))) / 60))}m ago</p></div><div className="cluster-total"><span>Projected cluster value</span><strong>{money.format(selectedProjected)}</strong></div></div>
             <div className="unit-grid">{selected.units.map((unit, index) => <UnitCard key={unit.id} unit={unit} index={index} clock={clock} />)}</div>
-            {lastHalt?.clusterId === selected.id && <div className="event-banner"><span className="event-icon">!</span><div><strong>Overseer halt event received</strong><p>Cluster {selected.id} counters frozen at attested checkpoint · block {lastHalt.at.toString().slice(-6)}</p></div><span className="event-time">just now</span></div>}
+            {lastHalt?.clusterId === selected.id && <div className="event-banner"><span className="event-icon">!</span><div><strong>Overseer halt event received</strong><p>{lastHalt.unitId} frozen at its attested checkpoint · block {lastHalt.at.toString().slice(-6)}</p></div><span className="event-time">just now</span></div>}
           </div></section>
       </main>
       <footer><span>Bulkhead Protocol</span><span>Projected accrual · checkpoint anchored</span><span className="mono">{new Date(clock * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })} UTC</span></footer>

@@ -2,25 +2,23 @@
 pragma solidity ^0.8.24;
 
 contract MockPrecompile {
-    bool public shouldVerify;
-    uint8 public receiptStatus;
-    bytes public txData;
-    event VerifyCalled(uint64 chainKey, uint64 height, uint8 receiptStatus);
+    bool public shouldVerify = true;
+    event VerifyCalled(uint64 chainKey, uint64 height);
 
-    function configure(bool verify_, uint8 status_, bytes calldata txData_) external {
-        shouldVerify = verify_;
-        receiptStatus = status_;
-        txData = txData_;
-    }
+    function configure(bool verify_) external { shouldVerify = verify_; }
+
+    struct MerkleProofEntry { bytes32 hash; bool isLeft; }
+    struct MerkleProof { bytes32 root; MerkleProofEntry[] siblings; }
+    struct ContinuityProof { bytes32 lowerEndpointDigest; bytes32[] roots; }
 
     function verifyAndEmit(
         uint64 chainKey,
         uint64 height,
         bytes calldata,
-        bytes calldata,
-        bytes calldata
-    ) external returns (bool, uint8, bytes memory) {
-        emit VerifyCalled(chainKey, height, receiptStatus);
-        return (shouldVerify, receiptStatus, txData);
+        MerkleProof calldata,
+        ContinuityProof calldata
+    ) external returns (bool) {
+        emit VerifyCalled(chainKey, height);
+        return shouldVerify;
     }
 }

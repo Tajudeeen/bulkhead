@@ -12,7 +12,7 @@ The local Hardhat toolchain and `@gluwa/usc-sdk` 0.18.0 (ethers 6.17) are instal
 
 ## Demo
 
-On Sepolia, call `MockDistressSignal.emitDistress(clusterId, distressBps)`. A
+On Sepolia, call `MockDistressSignal.emitDistress(bulkhead, clusterId, distressBps)`. A
 value of `2000` or more is the published halt threshold. The worker watches the
 event, submits the proof, and the Overseer evaluates the attested value.
 

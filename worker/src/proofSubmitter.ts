@@ -31,7 +31,7 @@ export async function submitProof(config: ProofSubmitterConfig, proof: any) {
   const provider = new JsonRpcProvider(config.creditcoinRpcUrl);
   const signer = new Wallet(config.privateKey, provider);
   const gateway = new Contract(config.gatewayAddress, config.gatewayAbi, signer);
-  const tx = await gateway.verify({
+  const tx = await gateway.verifyAndProcess({
     chainKey: proof.chainKey,
     height: proof.headerNumber,
     encodedTransaction: proof.txBytes,

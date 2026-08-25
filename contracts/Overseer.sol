@@ -12,6 +12,7 @@ contract Overseer {
     address public immutable gateway;
     address public immutable registryAdmin;
     mapping(uint256 => address[]) public clusterBulkheads;
+    mapping(address => uint256) public registeredClusterPlusOne;
     mapping(bytes32 => bool) public processedQuery;
 
     event ClusterRegistered(uint256 indexed clusterId, address[] bulkheads);
@@ -35,19 +36,24 @@ contract Overseer {
         require(msg.sender == registryAdmin, "only registry admin");
         require(clusterBulkheads[clusterId].length == 0, "cluster exists");
         require(bulkheads.length > 0 && bulkheads.length <= 7, "invalid cluster");
+        for (uint256 i; i < bulkheads.length; ++i) {
+            Bulkhead unit = Bulkhead(bulkheads[i]);
+            require(unit.overseer() == address(this), "wrong overseer");
+            require(unit.clusterId() == clusterId, "wrong cluster");
+            require(registeredClusterPlusOne[bulkheads[i]] == 0, "bulkhead registered");
+            registeredClusterPlusOne[bulkheads[i]] = clusterId + 1;
+        }
         clusterBulkheads[clusterId] = bulkheads;
         emit ClusterRegistered(clusterId, bulkheads);
     }
 
-    function processVerifiedData(bytes32 queryId, uint256 clusterId, uint256 distressBps) external {
+    function processVerifiedData(bytes32 queryId, address bulkhead, uint256 clusterId, uint256 distressBps) external {
         require(msg.sender == gateway, "only gateway");
         require(!processedQuery[queryId], "query processed");
+        require(registeredClusterPlusOne[bulkhead] == clusterId + 1, "unregistered bulkhead");
         processedQuery[queryId] = true;
         if (distressBps < DISTRESS_THRESHOLD_BPS) return;
-        address[] storage units = clusterBulkheads[clusterId];
-        for (uint256 i; i < units.length; ++i) {
-            Bulkhead(units[i]).halt();
-            emit BulkheadHalted(units[i], clusterId, queryId, distressBps, DISTRESS_THRESHOLD_BPS);
-        }
+        Bulkhead(bulkhead).halt();
+        emit BulkheadHalted(bulkhead, clusterId, queryId, distressBps, DISTRESS_THRESHOLD_BPS);
     }
 }

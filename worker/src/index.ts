@@ -8,7 +8,7 @@ const config: ProofSubmitterConfig = {
   sourceRpcUrl: process.env.SOURCE_CHAIN_RPC_URL ?? "",
   creditcoinRpcUrl: process.env.CREDITCOIN_RPC_URL ?? "",
   gatewayAddress: process.env.GATEWAY_ADDRESS ?? "",
-  gatewayAbi: ["function verify((uint64,uint64,bytes,(bytes32,(bytes32,bool)[]),(bytes32,bytes32[]))) returns (bytes32)"],
+  gatewayAbi: ["function verifyAndProcess((uint64,uint64,bytes,(bytes32,(bytes32,bool)[]),(bytes32,bytes32[]))) returns (bytes32)"],
   privateKey: process.env.CREDITCOIN_WALLET_PRIVATE_KEY ?? "",
 };
 
@@ -19,7 +19,7 @@ for (const [name, value] of Object.entries(config)) {
 await watchDistressSignal(
   config.sourceRpcUrl,
   process.env.DISTRESS_SIGNAL_ADDRESS ?? "",
-  ["event DistressSignal(uint256,uint256)"],
+  ["event DistressSignal(address,uint256,uint256)"],
   Number(process.env.START_BLOCK ?? 0),
   async (txHash) => {
     const proof = await buildProof(config, txHash);
