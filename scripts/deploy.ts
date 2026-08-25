@@ -34,7 +34,10 @@ const clusters = [];
 for (const [clusterId, count] of [[1, 7], [2, 7], [3, 7]]) {
   const creation = await checked(`Cluster ${clusterId} creation`, await factory.createCluster(clusterId, count));
   const finalization = await checked(`Cluster ${clusterId} finalization`, await factory.finalizeCluster(clusterId));
-  const bulkheads = await factory.cluster(clusterId);
+  // Ethers v6 returns a read-only Result for dynamic arrays. Convert it before
+  // passing the addresses back into a contract call; the ABI encoder mutates
+  // arrays while resolving nested arguments.
+  const bulkheads = Array.from(await factory.cluster(clusterId)) as string[];
   const registration = await checked(`Cluster ${clusterId} registration`, await overseer.registerCluster(clusterId, bulkheads));
   for (const bulkhead of bulkheads) {
     if (await ethers.provider.getCode(bulkhead) === "0x") throw new Error(`no bytecode at Bulkhead ${bulkhead}`);
