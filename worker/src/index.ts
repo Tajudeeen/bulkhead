@@ -12,18 +12,29 @@ const config: ProofSubmitterConfig = {
   privateKey: process.env.CREDITCOIN_WALLET_PRIVATE_KEY ?? "",
 };
 
+if (!Number.isSafeInteger(config.sourceChainKey) || config.sourceChainKey <= 0) {
+  throw new Error("SOURCE_CHAIN_KEY must be a positive integer");
+}
 for (const [name, value] of Object.entries(config)) {
   if (typeof value === "string" && !value) throw new Error(`${name} is required`);
 }
+const signalAddress = process.env.DISTRESS_SIGNAL_ADDRESS ?? "";
+const startBlock = Number(process.env.START_BLOCK ?? 0);
+if (!signalAddress) throw new Error("DISTRESS_SIGNAL_ADDRESS is required");
+if (!Number.isSafeInteger(startBlock) || startBlock < 0) throw new Error("START_BLOCK must be a non-negative integer");
 
 await watchDistressSignal(
   config.sourceRpcUrl,
-  process.env.DISTRESS_SIGNAL_ADDRESS ?? "",
+  signalAddress,
   ["event DistressSignal(address,uint256,uint256)"],
-  Number(process.env.START_BLOCK ?? 0),
+  startBlock,
   async (txHash) => {
     const proof = await buildProof(config, txHash);
     const result = await submitProof(config, proof);
     console.log(`submitted proof tx ${result.hash}`);
+  },
+  {
+    confirmations: Number(process.env.SOURCE_CONFIRMATIONS ?? 3),
+    statePath: process.env.WORKER_STATE_PATH ?? ".worker-state.json",
   },
 );

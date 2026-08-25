@@ -10,11 +10,22 @@ The local Hardhat toolchain and `@gluwa/usc-sdk` 0.18.0 (ethers 6.17) are instal
 
 `Bulkhead` and `BulkheadFactory` compile with Solidity 0.8.24. Factory creation is permissionless, cluster membership is capped at seven instances, and each instance has an immutable Overseer address with no sibling references.
 
-## Demo
+## Deployment and Demo
 
-On Sepolia, call `MockDistressSignal.emitDistress(bulkhead, clusterId, distressBps)`. A
-value of `2000` or more is the published halt threshold. The worker watches the
-event, submits the proof, and the Overseer evaluates the attested value.
+1. Deploy the source fixture to Sepolia with `npm run deploy:source` using
+   `SOURCE_CHAIN_RPC_URL` and `SOURCE_CHAIN_PRIVATE_KEY`. Record its verified
+   address as `SOURCE_SIGNAL_ADDRESS`.
+2. Deploy the Creditcoin contracts with `npm run deploy:creditcoin`. The script
+   configures the Gateway, creates and finalizes three seven-unit clusters, and
+   registers those exact addresses with the Overseer.
+3. On Sepolia, the authorized operator calls
+   `MockDistressSignal.emitDistress(bulkhead, clusterId, distressBps)`. A value
+   of `2000` or more is the published halt threshold. The worker waits for
+   confirmations, submits the proof, and the Overseer evaluates the attested
+   value.
+
+The mock signal is a controlled demo fixture, not a production oracle. Its
+operator key is the source-chain trust boundary and must be secured separately.
 
 Deployment addresses and explorer links are intentionally omitted until a real
 receipt is checked.

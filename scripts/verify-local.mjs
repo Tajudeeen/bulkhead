@@ -3,23 +3,26 @@ import { network } from "hardhat";
 const PRECOMPILE = "0x0000000000000000000000000000000000000FD2";
 const { ethers } = await network.create();
 const [admin, attacker] = await ethers.getSigners();
+const adminAddress = await admin.getAddress();
 
 const mock = await ethers.deployContract("MockPrecompile");
 await ethers.provider.send("hardhat_setCode", [PRECOMPILE, await ethers.provider.getCode(await mock.getAddress())]);
 const verifier = await ethers.getContractAt("MockPrecompile", PRECOMPILE);
 await verifier.configure(true);
 
-const gateway = await ethers.deployContract("AttestationGateway", [admin.address]);
+const gateway = await ethers.deployContract("AttestationGateway", [adminAddress]);
 const overseer = await ethers.deployContract("Overseer", [await gateway.getAddress()]);
 const factory = await ethers.deployContract("BulkheadFactory", [await overseer.getAddress()]);
-const signal = await ethers.deployContract("MockDistressSignal");
-const wrongSignal = await ethers.deployContract("MockDistressSignal");
+const signal = await ethers.deployContract("MockDistressSignal", [adminAddress]);
+const wrongSignal = await ethers.deployContract("MockDistressSignal", [adminAddress]);
 const encoder = await ethers.deployContract("MockReceiptEncoder");
 const signalAddress = await signal.getAddress();
 
 await gateway.configure(await overseer.getAddress(), signalAddress, 1);
 await factory.createCluster(7, 2);
 await factory.createCluster(8, 1);
+await factory.finalizeCluster(7);
+await factory.finalizeCluster(8);
 const cluster7 = [...await factory.cluster(7)];
 const cluster8 = [...await factory.cluster(8)];
 await overseer.registerCluster(7, cluster7);
@@ -35,7 +38,8 @@ const makeQuery = async (height, status, emitter, bulkhead, clusterId, distressB
 
 const expectRevert = async (label, action) => {
   try {
-    await action();
+    const result = await action();
+    if (result && typeof result.wait === "function") await result.wait();
     throw new Error(`${label}: expected revert`);
   } catch (error) {
     if (String(error?.message).includes("expected revert")) throw error;
@@ -62,6 +66,9 @@ if (!(await target.halted())) throw new Error("target was not halted");
 if (await sibling.halted()) throw new Error("sibling was incorrectly halted");
 if (await unrelated.halted()) throw new Error("unrelated cluster was incorrectly halted");
 console.log("PASS threshold crossing halts only the attested Bulkhead");
+
+await expectRevert("out-of-range attested distress is rejected", async () =>
+  gateway.verifyAndProcess(await makeQuery(1041, 1, signalAddress, cluster7[1], 7, 10_001)));
 
 await verifier.configure(false);
 await expectRevert("failed precompile verification is rejected", async () =>

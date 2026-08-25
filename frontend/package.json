@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
+    "ethers": "^6.17.0",
     "react": "latest",
     "react-dom": "latest",
     "typescript": "latest",

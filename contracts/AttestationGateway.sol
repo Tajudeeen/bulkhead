@@ -139,6 +139,7 @@ contract AttestationGateway {
         bulkhead = address(uint160(uint256(distressLog.topics[1])));
         clusterId = uint256(distressLog.topics[2]);
         distressBps = abi.decode(distressLog.data, (uint256));
+        if (bulkhead == address(0) || distressBps > 10_000) revert InvalidDistressSignal();
     }
 
     function _decodeReceipt(bytes calldata encodedTransaction)

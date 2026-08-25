@@ -4,3 +4,5 @@ artifacts/
 .env
 coverage/
 types/
+.worker-state.json
+.worker-state.json.tmp

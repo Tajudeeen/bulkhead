@@ -21,8 +21,10 @@ batch of up to ten queries.
 
 - `contracts/`: isolated Bulkheads, factory, Gateway, Overseer, and demo signal.
 - `worker/`: dumb proof relayer with retry/error propagation.
-- `frontend/`: cluster view and projected checkpoint yield hook; halt events
-  freeze the displayed value.
+- `frontend/`: read-only live cluster/halt state when `VITE_*` addresses are
+  configured, plus an explicitly labeled local fixture preview. The current
+  contracts do not store yield checkpoints, so live mode does not fabricate
+  principal or rate data.
 - `docs/`: architecture, integration notes, and verification status.
 
 Real testnet evidence is never inferred from local compilation. The current
@@ -48,3 +50,8 @@ run `npm run frontend:preview`.
 The repository is being built in gated phases. Real testnet transaction hashes,
 receipts, deployment addresses, and explorer links are recorded only after they
 are independently verified.
+
+The Sepolia distress fixture is operator-authorized for the demo. It is not
+presented as a production oracle; the Attestcoin proof authenticates the source
+transaction and receipt, while the on-chain Overseer alone applies the halt
+threshold.

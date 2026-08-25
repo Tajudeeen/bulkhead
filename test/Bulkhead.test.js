@@ -35,4 +35,19 @@ describe("Bulkhead and factory", function () {
     expect(await a.clusterId()).to.equal(11n);
     expect(await a.overseer()).to.equal(owner.address);
   });
+
+  it("prevents unauthorized factory mutation and requires finalization", async function () {
+    const { owner, other, factory } = await setup();
+    await expect(factory.connect(other).createBulkhead(11)).to.be.revertedWithCustomError(factory, "Unauthorized");
+    await factory.finalizeCluster(11);
+    await expect(factory.createBulkhead(11)).to.be.revertedWithCustomError(factory, "ClusterFinalized");
+  });
+
+  it("restricts the demo distress source and bounds basis points", async function () {
+    const { ethers, owner, other } = await setup();
+    const signal = await ethers.deployContract("MockDistressSignal", [owner.address]);
+    await expect(signal.connect(other).emitDistress(owner.address, 11, 2_000))
+      .to.be.revertedWithCustomError(signal, "Unauthorized");
+    await expect(signal.emitDistress(owner.address, 11, 10_001)).to.be.revertedWith("bps out of range");
+  });
 });
