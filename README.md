@@ -29,6 +29,22 @@ Real testnet evidence is never inferred from local compilation. The current
 workspace records the missing funded RPC/proof-builder prerequisite instead of
 inventing transaction hashes or deployment addresses.
 
+## Preview the dashboard
+
+Install frontend dependencies once, then start Vite:
+
+```powershell
+npm install --prefix frontend
+npm run frontend:dev -- --host 127.0.0.1
+```
+
+Open [http://127.0.0.1:5173/](http://127.0.0.1:5173/). The dashboard includes
+three clusters, projected checkpoint-based accrual, and a local distress
+simulation that freezes the selected cluster and displays the Overseer event.
+
+For a production bundle, run `npm run frontend:build`; to serve that bundle,
+run `npm run frontend:preview`.
+
 The repository is being built in gated phases. Real testnet transaction hashes,
 receipts, deployment addresses, and explorer links are recorded only after they
 are independently verified.

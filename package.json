@@ -7,6 +7,9 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "typecheck": "tsc --noEmit"
+    ,"frontend:dev": "npm --prefix frontend run dev --"
+    ,"frontend:build": "npm --prefix frontend run build"
+    ,"frontend:preview": "npm --prefix frontend run preview"
   },
   "keywords": [],
   "author": "",
