@@ -44,6 +44,7 @@ export async function watchDistressSignal(
   const provider = new JsonRpcProvider(rpcUrl);
   const signal = new Contract(signalAddress, signalAbi, provider);
   const state = await loadState(statePath, fromBlock);
+  if (retryDeadLetters) state.nextBlock = fromBlock;
   const seen = new Set(state.processed);
   const deadLetters = new Set(state.deadLetters);
   for (;;) {
