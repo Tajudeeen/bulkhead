@@ -27,9 +27,10 @@ batch of up to ten queries.
   principal or rate data.
 - `docs/`: architecture, integration notes, and verification status.
 
-Real testnet evidence is never inferred from local compilation. The current
-workspace records the missing funded RPC/proof-builder prerequisite instead of
-inventing transaction hashes or deployment addresses.
+Real testnet evidence is never inferred from local compilation. This workspace
+now records independently checked Sepolia and Creditcoin receipts for the full
+proof-to-halt path; no claim is made for additional rehearsal runs until their
+receipts exist.
 
 ## Preview the dashboard
 
