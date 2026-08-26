@@ -24,6 +24,10 @@ The local Hardhat toolchain and `@gluwa/usc-sdk` 0.18.0 (ethers 6.17) are instal
    confirmations, submits the proof, and the Overseer evaluates the attested
    value.
 
+If a worker run dead-letters an event after transient failures, restart once
+with `RETRY_DEAD_LETTERS=true` to replay those persisted events after fixing the
+underlying cause.
+
 The mock signal is a controlled demo fixture, not a production oracle. Its
 operator key is the source-chain trust boundary and must be secured separately.
 

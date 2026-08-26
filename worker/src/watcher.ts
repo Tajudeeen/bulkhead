@@ -29,7 +29,7 @@ export async function watchDistressSignal(
   signalAbi: readonly string[],
   fromBlock: number,
   onTransaction: (txHash: string) => Promise<void>,
-  options: { confirmations?: number; pollMs?: number; maxAttempts?: number; statePath?: string; reorgLookback?: number } = {},
+  options: { confirmations?: number; pollMs?: number; maxAttempts?: number; statePath?: string; reorgLookback?: number; retryDeadLetters?: boolean } = {},
 ) {
   if (!rpcUrl) throw new Error("source RPC URL is required");
   if (!signalAddress) throw new Error("distress signal address is required");
@@ -39,6 +39,7 @@ export async function watchDistressSignal(
   const maxAttempts = options.maxAttempts ?? 5;
   const statePath = options.statePath ?? ".worker-state.json";
   const reorgLookback = options.reorgLookback ?? confirmations + 2;
+  const retryDeadLetters = options.retryDeadLetters ?? false;
   if (!Number.isSafeInteger(confirmations) || confirmations < 0) throw new Error("confirmations must be non-negative");
   const provider = new JsonRpcProvider(rpcUrl);
   const signal = new Contract(signalAddress, signalAbi, provider);
@@ -56,7 +57,7 @@ export async function watchDistressSignal(
           const logIndex = "index" in event && typeof event.index === "number" ? event.index : -1;
           const blockHash = "blockHash" in event ? String(event.blockHash) : "unknown";
           const eventId = `${blockHash}:${event.transactionHash}:${logIndex}`;
-          if (seen.has(eventId) || deadLetters.has(eventId)) continue;
+          if (seen.has(eventId) || (deadLetters.has(eventId) && !retryDeadLetters)) continue;
           let attempt = 0;
           let delivered = false;
           while (!delivered && attempt < maxAttempts) {
@@ -75,7 +76,10 @@ export async function watchDistressSignal(
               await new Promise((resolve) => setTimeout(resolve, delay));
             }
           }
-          if (delivered) seen.add(eventId);
+          if (delivered) {
+            seen.add(eventId);
+            deadLetters.delete(eventId);
+          }
           state.processed = [...seen];
           state.deadLetters = [...deadLetters];
           await saveState(statePath, state);
