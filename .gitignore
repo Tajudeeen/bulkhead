@@ -2,6 +2,7 @@ node_modules/
 artifacts/
 .hardhat-cache/
 .env
+*.env.local
 coverage/
 types/
 .worker-state.json

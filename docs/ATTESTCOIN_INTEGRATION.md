@@ -4,7 +4,11 @@ The official USC examples were cloned under `.reference/usc-testnet-bridge-examp
 
 ## Phase 0 evidence
 
-Pending: a funded Sepolia and Creditcoin testnet wallet, RPC URLs, and a real verified transaction receipt. This file intentionally contains no invented hash or explorer link.
+The Sepolia demo signal was deployed successfully in transaction
+`0x8e9d2734bfd3b148bb8363ca8f6161f89e12dfea98d3a4c6e97bd5a65cb7bff6`
+at block `11564264`. Receipt status, runtime bytecode, contract address, and
+operator state were independently checked. The real Attestcoin proof and
+Creditcoin halt transaction remain pending until the end-to-end demo below is run.
 
 ## Current implementation boundary
 

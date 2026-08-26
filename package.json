@@ -13,7 +13,8 @@
     "frontend:preview": "npm --prefix frontend run preview",
     "deploy:source": "hardhat compile && tsx scripts/deploy-source.ts",
     "deploy:creditcoin": "hardhat run scripts/deploy.ts --network creditcoin",
-    "deploy:creditcoin:resume": "hardhat run scripts/resume-creditcoin.ts --network creditcoin"
+    "deploy:creditcoin:resume": "hardhat run scripts/resume-creditcoin.ts --network creditcoin",
+    "demo:distress": "tsx scripts/trigger-distress.ts"
   },
   "keywords": [],
   "author": "",
